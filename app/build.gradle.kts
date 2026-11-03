@@ -3,14 +3,14 @@ plugins {
 }
 
 android {
-    namespace = "com.onarc.myapplication"
+    namespace = "com.onarc.app"
     compileSdk {
         version = release(37)
     }
 
     defaultConfig {
-        applicationId = "com.onarc.myapplication"
-        minSdk = 34
+        applicationId = "com.onarc.app"
+        minSdk = 26
         targetSdk = 37
         versionCode = 1
         versionName = "1.0"

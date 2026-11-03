@@ -1,4 +1,4 @@
-package com.onarc.myapplication;
+package com.onarc.app;
 
 import org.junit.Test;
 
