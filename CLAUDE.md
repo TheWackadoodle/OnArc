@@ -16,7 +16,10 @@ For each new piece of work:
 4. **Matthew codes it**, then Claude reviews: what's good, what's wrong, and why.
 
 ## Tests are Claude's job
-Claude writes the unit tests for the code Matthew writes, pushes them, and Matthew runs them. A test that's expected to fail (because it catches something Matthew still needs to fix) gets a comment saying so.
+Test files are 100% Claude's: writing, updating, fixing and pushing them. Matthew just runs them.
+
+- When a test fails because of non-test code, Claude tells Matthew what's wrong and where, and Matthew fixes it (teaching mode).
+- A test that's expected to fail until Matthew fixes something gets a comment saying so.
 
 ## When Claude may write and push code itself
 - Only when Matthew explicitly asks for it (e.g. "push it", "do it for me").
