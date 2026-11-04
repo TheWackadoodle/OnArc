@@ -1,3 +1,5 @@
+// Made by Claude
+
 package com.onarc.shared;
 
 import static org.junit.Assert.assertEquals;
