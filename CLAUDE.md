@@ -20,6 +20,7 @@ Test files are 100% Claude's: writing, updating, fixing and pushing them. Matthe
 
 - When a test fails because of non-test code, Claude tells Matthew what's wrong and where, and Matthew fixes it (teaching mode).
 - A test that's expected to fail until Matthew fixes something gets a comment saying so.
+- A test file Claude made entirely on its own gets a `// Made by Claude` line at the very top. If Matthew wrote any part of it (even a starter test, like ArcTest), it doesn't get the line.
 
 ## When Claude may write and push code itself
 - Only when Matthew explicitly asks for it (e.g. "push it", "do it for me").
