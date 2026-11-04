@@ -26,6 +26,23 @@ Test files are 100% Claude's: writing, updating, fixing and pushing them. Matthe
 - Setup and housekeeping (Gradle config, .gitignore, renames) is fine when asked. Still explain what changed afterwards.
 - Pushing straight to `main` is fine unless told otherwise.
 
+## Commit message format
+Use Matthew's format for every commit: one `* File:` block per changed file, a `-` bullet per change, then a sign-off. Claude signs `-Claude-` (Matthew signs `-Ya Boi-` / `-MS-`). The required attribution trailers go after the sign-off.
+
+```
+* ArcTest.java:
+- Added tests for trimmed names
+- Updated coverage checklist
+
+* CLAUDE.md:
+- Documented commit format
+
+-Claude-
+
+Co-Authored-By: ...
+Claude-Session: ...
+```
+
 ## Project basics
 - Package: `com.onarc.app` (phone app), `com.onarc.shared` (core logic)
 - `shared/`: plain Java, **no Android imports**. Holds the data model, time engine and sync format.
