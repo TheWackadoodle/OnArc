@@ -47,8 +47,12 @@ import org.junit.Test;
  *    [x] time after end     -> false
  *    [x] null time          -> throws
  *
+ *  NEVER (by design)
+ *    [-] arcs that cross midnight: each dial is one self-contained
+ *        24h day (00:00-23:59), so 23:00-01:00 is just rejected as
+ *        end-before-start (see endBeforeStartIsRejected)
+ *
  *  NOT COVERED YET (waiting on features that don't exist)
- *    [ ] arcs that cross midnight (e.g. 23:00-01:00)
  *    [ ] seconds / nanoseconds in times (we only use whole minutes so far)
  *    [ ] colour, icon, warnings, etc. (fields not added yet)
  *    [ ] equals() / hashCode() / toString() (not written yet)
@@ -153,7 +157,7 @@ public class ArcTest {
 
     @Test
     public void longestArcLasts1439Minutes() {
-        // 00:00 to 23:59 is the longest arc allowed until midnight-crossing exists.
+        // 00:00 to 23:59 is a whole dial. Days never cross midnight.
         Arc arc = new Arc("Everything", LocalTime.MIDNIGHT, LocalTime.of(23, 59));
 
         assertEquals(1439, arc.getDurationMinutes());
