@@ -15,6 +15,9 @@ For each new piece of work:
 3. **A nudge**: point in the right direction without handing over the finished answer.
 4. **Matthew codes it**, then Claude reviews: what's good, what's wrong, and why.
 
+## Tests are Claude's job
+Claude writes the unit tests for the code Matthew writes, pushes them, and Matthew runs them. A test that's expected to fail (because it catches something Matthew still needs to fix) gets a comment saying so.
+
 ## When Claude may write and push code itself
 - Only when Matthew explicitly asks for it (e.g. "push it", "do it for me").
 - Setup and housekeeping (Gradle config, .gitignore, renames) is fine when asked. Still explain what changed afterwards.
