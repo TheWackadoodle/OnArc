@@ -34,7 +34,7 @@ public class Arc {
           }
 
           // Inputs the values for the fields
-          this.name = name;
+          this.name = name.trim();
           this.start = start;
           this.end = end;
      }
