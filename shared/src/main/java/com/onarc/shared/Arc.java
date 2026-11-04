@@ -58,6 +58,11 @@ public class Arc {
 
      // These are the Behavior Methods for the Arc
      public boolean contains(LocalTime time) {
+          // Fail with a clear message instead of a vague NullPointerException
+          if (time == null) {
+               throw new IllegalArgumentException("The time to check cannot be empty");
+          }
+
           return !time.isBefore(start) && time.isBefore(end);
      }
 }
