@@ -49,6 +49,19 @@ import org.junit.Test;
  *    [x] time after end     -> false
  *    [x] null time          -> throws
  *
+ *  isOverlapping(other)   rule: touching ends do NOT count
+ *    [x] other starts inside this          -> true
+ *    [x] other ends inside this            -> true
+ *    [x] other fully inside this           -> true
+ *    [x] this fully inside other           -> true
+ *    [x] exact same times                  -> true
+ *    [x] back-to-back, other right after   -> false
+ *    [x] back-to-back, other right before  -> false
+ *    [x] other completely later            -> false
+ *    [x] other completely earlier          -> false
+ *    [x] same answer both ways (a vs b == b vs a)
+ *    [x] null other         -> throws
+ *
  *  NEVER (by design)
  *    [-] arcs that cross midnight: each dial is one self-contained
  *        24h day (00:00-23:59), so 23:00-01:00 is just rejected as
@@ -210,5 +223,83 @@ public class ArcTest {
         Arc arc = lunch();
 
         assertThrows(IllegalArgumentException.class, () -> arc.contains(null));
+    }
+
+    // ── isOverlapping: clashes ───────────────────────────────
+
+    // Short helper so the overlap tests read like a schedule.
+    private static Arc at(int startHour, int startMin, int endHour, int endMin) {
+        return new Arc("Test", LocalTime.of(startHour, startMin), LocalTime.of(endHour, endMin));
+    }
+
+    @Test
+    public void overlapsWhenOtherStartsInside() {
+        // Work 9-12, Gym 11-13
+        assertTrue(at(9, 0, 12, 0).isOverlapping(at(11, 0, 13, 0)));
+    }
+
+    @Test
+    public void overlapsWhenOtherEndsInside() {
+        // Work 9-12, Gym 8-10
+        assertTrue(at(9, 0, 12, 0).isOverlapping(at(8, 0, 10, 0)));
+    }
+
+    @Test
+    public void overlapsWhenOtherIsFullyInside() {
+        // Work 9-12, Gym 10-11
+        assertTrue(at(9, 0, 12, 0).isOverlapping(at(10, 0, 11, 0)));
+    }
+
+    @Test
+    public void overlapsWhenThisIsFullyInsideOther() {
+        assertTrue(at(10, 0, 11, 0).isOverlapping(at(9, 0, 12, 0)));
+    }
+
+    @Test
+    public void overlapsWhenTimesAreIdentical() {
+        assertTrue(lunch().isOverlapping(lunch()));
+    }
+
+    @Test
+    public void overlapIsTheSameBothWays() {
+        Arc work = at(9, 0, 12, 0);
+        Arc gym = at(11, 0, 13, 0);
+        Arc lunch = lunch();
+
+        assertEquals(work.isOverlapping(gym), gym.isOverlapping(work));
+        assertEquals(work.isOverlapping(lunch), lunch.isOverlapping(work));
+    }
+
+    // ── isOverlapping: no clash ──────────────────────────────
+
+    @Test
+    public void backToBackAfterDoesNotOverlap() {
+        // Lunch 12:00-12:45, then Work 12:45-14:00
+        assertFalse(lunch().isOverlapping(at(12, 45, 14, 0)));
+    }
+
+    @Test
+    public void backToBackBeforeDoesNotOverlap() {
+        // Morning 11:00-12:00, then Lunch 12:00-12:45
+        assertFalse(lunch().isOverlapping(at(11, 0, 12, 0)));
+    }
+
+    @Test
+    public void completelyLaterDoesNotOverlap() {
+        assertFalse(lunch().isOverlapping(at(18, 0, 19, 0)));
+    }
+
+    @Test
+    public void completelyEarlierDoesNotOverlap() {
+        assertFalse(lunch().isOverlapping(at(8, 0, 8, 30)));
+    }
+
+    // ── isOverlapping: bad input ─────────────────────────────
+
+    @Test
+    public void overlappingNullIsRejected() {
+        Arc arc = lunch();
+
+        assertThrows(IllegalArgumentException.class, () -> arc.isOverlapping(null));
     }
 }
