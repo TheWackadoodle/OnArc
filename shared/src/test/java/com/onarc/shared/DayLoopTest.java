@@ -2,10 +2,12 @@
 
 package com.onarc.shared;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.time.LocalTime;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -26,11 +28,16 @@ import org.junit.Test;
  *    [x] rejects an arc that swallows a whole existing arc
  *    [x] error message names the arc it clashed with
  *    [x] a rejected arc doesn't block a later arc that fits
+ *    [x] a rejected arc is NOT stored
+ *
+ *  getArcs()
+ *    [x] a new day is empty
+ *    [x] added arcs show up, in the order they were added
+ *    [x] can't add() through it (no sneaking past the clash check)
+ *    [x] can't remove() or clear() through it
+ *    [x] arcs added later still show up in a list you grabbed earlier
  *
  *  NOT COVERED YET (waiting on features that don't exist)
- *    [ ] the arc actually ends up stored (needs getArcs())
- *    [ ] a rejected arc is NOT stored (needs getArcs())
- *    [ ] getArcs() can't be used to sneak changes into the list
  *    [ ] current arc at a given time
  *    [ ] next arc after a given time
  * =====================================================================
@@ -131,5 +138,69 @@ public class DayLoopTest {
         // If Gym had sneaked into the list anyway, this would clash with it.
         day.addArc(arc("Lunch", 12, 0, 12, 45));
         day.addArc(arc("Walk", 12, 45, 13, 0));
+    }
+
+    @Test
+    public void rejectedArcIsNotStored() {
+        DayLoop day = new DayLoop();
+        day.addArc(arc("Work", 9, 0, 12, 0));
+
+        assertThrows(IllegalArgumentException.class,
+                () -> day.addArc(arc("Gym", 10, 0, 11, 0)));
+
+        assertEquals(1, day.getArcs().size());
+        assertEquals("Work", day.getArcs().get(0).getName());
+    }
+
+    // ── getArcs ──────────────────────────────────────────────
+
+    @Test
+    public void newDayIsEmpty() {
+        assertTrue(new DayLoop().getArcs().isEmpty());
+    }
+
+    @Test
+    public void addedArcsShowUpInOrder() {
+        DayLoop day = new DayLoop();
+        day.addArc(arc("Breakfast", 8, 0, 8, 30));
+        day.addArc(arc("Lunch", 12, 0, 12, 45));
+
+        List<Arc> arcs = day.getArcs();
+
+        assertEquals(2, arcs.size());
+        assertEquals("Breakfast", arcs.get(0).getName());
+        assertEquals("Lunch", arcs.get(1).getName());
+    }
+
+    @Test
+    public void cannotAddThroughGetArcs() {
+        DayLoop day = new DayLoop();
+        day.addArc(arc("Work", 9, 0, 12, 0));
+
+        // A clashing Gym must not be able to sneak in the back door.
+        assertThrows(UnsupportedOperationException.class,
+                () -> day.getArcs().add(arc("Gym", 10, 0, 11, 0)));
+        assertEquals(1, day.getArcs().size());
+    }
+
+    @Test
+    public void cannotRemoveOrClearThroughGetArcs() {
+        DayLoop day = new DayLoop();
+        day.addArc(arc("Work", 9, 0, 12, 0));
+
+        assertThrows(UnsupportedOperationException.class, () -> day.getArcs().remove(0));
+        assertThrows(UnsupportedOperationException.class, () -> day.getArcs().clear());
+        assertEquals(1, day.getArcs().size());
+    }
+
+    // unmodifiableList is a live read-only window, not a frozen copy.
+    @Test
+    public void earlierGrabbedListSeesLaterArcs() {
+        DayLoop day = new DayLoop();
+        List<Arc> view = day.getArcs();
+
+        day.addArc(arc("Lunch", 12, 0, 12, 45));
+
+        assertEquals(1, view.size());
     }
 }
