@@ -65,4 +65,10 @@ public class Arc {
 
           return !time.isBefore(start) && time.isBefore(end);
      }
-}
+
+	 public boolean isOverlapping(Arc other) {
+		 if (other == null) {
+			 throw new IllegalArgumentException("Arcs cannot be null");
+		 }
+		 return start.isBefore(other.end) && other.start.isBefore(end);
+	}
