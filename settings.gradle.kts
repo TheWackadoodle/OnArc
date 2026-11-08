@@ -26,5 +26,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "OnArc"
 include(":app")
-include(":shared")
  

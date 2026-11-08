@@ -33,7 +33,6 @@ android {
 }
 
 dependencies {
-    implementation(project(":shared"))
     implementation(libs.activity.ktx)
     implementation(libs.appcompat)
     implementation(libs.constraintlayout)

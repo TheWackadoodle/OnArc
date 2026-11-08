@@ -20,7 +20,7 @@ Test files are 100% Claude's: writing, updating, fixing and pushing them. Matthe
 
 - When a test fails because of non-test code, Claude tells Matthew what's wrong and where, and Matthew fixes it (teaching mode).
 - A test that's expected to fail until Matthew fixes something gets a comment saying so.
-- A test file Claude made entirely on its own gets a `// Made by Claude` line at the very top. If Matthew wrote any part of it, it doesn't get the line. (Exception: ArcTest has the line because Matthew asked, even though he started that file.)
+- A test file Claude made entirely on its own gets a `// Made by Claude` line at the very top. If Matthew wrote any part of it, it doesn't get the line.
 
 ## When Claude may write and push code itself
 - Only when Matthew explicitly asks for it (e.g. "push it", "do it for me").
@@ -45,8 +45,7 @@ Claude-Session: ...
 ```
 
 ## Project basics
-- Package: `com.onarc.app` (phone app), `com.onarc.shared` (core logic)
-- `shared/`: plain Java, **no Android imports**. Holds the data model, time engine and sync format.
+- Package: `com.onarc.app` (phone app). There is no `shared` module (deleted on purpose).
 - minSdk 26, so `java.time` (LocalTime, Duration, …) is available.
 - The roadmap is in `README.md`.
 
