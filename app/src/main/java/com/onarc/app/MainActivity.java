@@ -32,7 +32,7 @@
 // package name
 package com.onarc.app;
 
-// Imports nessacary, boilerplate android classes
+// Imports necessary, boilerplate android classes
 import android.os.Bundle;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
