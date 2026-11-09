@@ -25,7 +25,7 @@ public class ArcEntity {
     private boolean isDefault;
 
     // Nudges
-    private long nudgeTime;
+    private int nudgeMinutesBefore;
     private boolean nudgeEnabled;
     private boolean nudgeVibrate;
     private boolean nudgeSound;
@@ -109,12 +109,12 @@ public class ArcEntity {
         this.isDefault = isDefault;
     }
 
-    public long getNudgeTime() {
-        return nudgeTime;
+    public long getNudgeMinutesBefore() {
+        return nudgeMinutesBefore;
     }
 
-    public void setNudgeTime(long nudgeTime) {
-        this.nudgeTime = nudgeTime;
+    public void setNudgeMinutesBefore(int nudgeMinutesBefore) {
+        this.nudgeMinutesBefore = nudgeMinutesBefore;
     }
 
     public boolean isNudgeEnabled() {
