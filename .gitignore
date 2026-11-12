@@ -1,15 +1,51 @@
+# Android / Gradle build output
 *.iml
 .gradle
+/build
+**/build/
+/captures
+.externalNativeBuild
+.cxx
+*.apk
+*.aab
+*.ap_
+*.dex
+*.class
+*.hprof
+output.json
+/.kotlin/
+*.log
+
+# Local config (SDK paths, signing keys)
 /local.properties
+local.properties
+*.jks
+*.keystore
+keystore.properties
+
+# IntelliJ / Android Studio machine-specific files
 /.idea/caches
 /.idea/libraries
 /.idea/modules.xml
 /.idea/workspace.xml
 /.idea/navEditor.xml
 /.idea/assetWizardSettings.xml
+/.idea/copilot
+/.idea/inspectionProfiles
+/.idea/shelf
+/.idea/dictionaries
+/.idea/httpRequests
+/.idea/dataSources
+/.idea/tasks.xml
+/.idea/usage.statistics.xml
+/.idea/markdown-navigator
+/.idea/sonarlint
+/.idea/codestream.xml
+.idea/**/*.iml
+
+# macOS / Windows / editor junk
 .DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
-local.properties
+Thumbs.db
+*.swp
+*~
+.vscode/
