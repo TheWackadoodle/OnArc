@@ -109,7 +109,7 @@ public class ArcEntity {
         this.isDefault = isDefault;
     }
 
-    public long getNudgeMinutesBefore() {
+    public int getNudgeMinutesBefore() {
         return nudgeMinutesBefore;
     }
 
