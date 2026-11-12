@@ -24,5 +24,5 @@ public interface ArcDao {
      LiveData<List<ArcEntity>> getAllArcs();
 
      @Query("SELECT * FROM arcs WHERE id = :id LIMIT 1")
-     ArcEntity getArcById(String id);
+     LiveData<ArcEntity> getArcById(String id);
 }
