@@ -12,6 +12,9 @@ public class ArcEntity {
     @NonNull
     private String id = UUID.randomUUID().toString();
 
+    // Which Dial this arc is on
+    private String dialId;
+
     // Core fields
     private String name;
     private String emoji;
@@ -43,6 +46,14 @@ public class ArcEntity {
 
     public void setId(@NonNull String id) {
         this.id = id;
+    }
+
+    public String getDialId() {
+        return dialId;
+    }
+
+    public void setDialId(String dialId) {
+        this.dialId = dialId;
     }
 
     public String getName() {
