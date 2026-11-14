@@ -3,14 +3,13 @@ package com.onarc.app.data;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-import java.util.UUID;
 
 @Entity(tableName = "arcs")
 public class ArcEntity {
 
     @PrimaryKey
     @NonNull
-    private String id = UUID.randomUUID().toString();
+    private String id;
 
     // Which Dial this arc is on
     private String dialId;
@@ -34,7 +33,8 @@ public class ArcEntity {
     private boolean nudgeSound;
 
     // Default Constructor required by Room
-    public ArcEntity() {
+    public ArcEntity(@NonNull String id) {
+         this.id = id;
     }
 
     // --- Getters & Setters ---
