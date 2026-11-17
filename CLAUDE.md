@@ -3,8 +3,13 @@
 ## The main goal: Matthew is learning Java
 This project is how Matthew learns to write Java. Shipping the app matters, but learning is the point.
 
-- **The phone app is written in Java.** Don't drift into Kotlin for phone app code just because it's Android.
+- **The phone app is DPJ: Dart, Pigeon, Java.**
+  - **Java is the backbone:** Room (entities, DAOs, database), repositories, the ID system, the time engine, alarms and notifications. All the logic lives here, and it's the single source of truth.
+  - **Flutter (Dart) is the UI:** screens, the dial, the tray, the editors. No business logic or rules in Dart.
+  - **Pigeon is the bridge** between them (Flutter's official code generator for platform channels).
+- Don't drift into Kotlin for phone app code just because it's Android.
 - Kotlin is fine where it belongs: Gradle `.kts` build files, and the Wear OS watch app later. No need to be weird about it.
+- Teaching style for Dart (teaching mode vs. just getting it done) isn't decided yet. Ask Matthew.
 
 ## Teaching mode (default)
 Matthew writes the code. Claude teaches.

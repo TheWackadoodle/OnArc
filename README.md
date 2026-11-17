@@ -6,7 +6,7 @@ A visual day planner for neurodivergent minds: your day as a dial of coloured ar
 
 ## Stack
 
-- **Phone app:** Java, Android Views + Material Components
+- **Phone app (DPJ):** a Java backbone (Room, repositories, IDs, time engine, alarms and notifications) with a Flutter (Dart) UI on top, connected by Pigeon
 - **Watch app:** Kotlin, Compose for Wear OS (comes after the phone app)
 - **Shared core:** a plain Java module with the data model, time engine and sync format, used by both apps
 
@@ -33,7 +33,7 @@ Open the project in Android Studio and run the `app` configuration on a device o
 |---|---|---|
 | Name | **OnArc** | |
 | Package name | e.g. `com.onarc.app` | Permanent once you release. The phone and watch apps must share it. |
-| Phone UI toolkit | **XML layouts + Views** (Material Components) | Jetpack Compose is Kotlin-only. The dial will be a custom `View`. |
+| Phone UI toolkit | **Flutter (Dart)** over a Java backbone, bridged by **Pigeon** ("DPJ") | Decided. All logic stays in Java; Dart is screens and drawing only. Project shape (add-to-app vs. a Flutter project with the Java in `android/`) gets decided when UI work starts. |
 | Watch UI toolkit | **Compose for Wear OS** (Kotlin) | Decide when we reach the watch. |
 | Phone minSdk | 26 (Android 8.0) | |
 | Watch minSdk | 30 (Wear OS 3) | |
@@ -80,7 +80,7 @@ Then:
 
 - [ ] **Room** database for arcs, days and templates.
 - [ ] A repository layer. The UI never touches the database directly.
-- [ ] `ViewModel` + `LiveData`.
+- [ ] `LiveData` on the Java side, a state holder (Provider or Riverpod) on the Flutter side, with Pigeon carrying data and "something changed" signals between them.
 - [ ] Settings in `SharedPreferences` or DataStore.
 
 ## 4. Nudge engine (phone)
@@ -100,9 +100,9 @@ Then:
 
 ## 6. The dial
 
-- [ ] A custom `DialView extends View`: the arcs, a "now" hand and labels.
+- [ ] The dial, drawn in Flutter (`CustomPainter`): the arcs, a "now" hand and labels.
 - [ ] Tap an arc to edit it. Later, drag its ends to resize it.
-- [ ] TalkBack support through `ExploreByTouchHelper`.
+- [ ] TalkBack support through Flutter's `Semantics` widget.
 - [ ] Screens: Today, the arc editor (a bottom sheet), Templates, Settings, and onboarding.
 
 ## 7. Polish
