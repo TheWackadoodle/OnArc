@@ -8,7 +8,6 @@ A visual day planner for neurodivergent minds: your day as a dial of coloured ar
 
 - **Phone app (DPJ):** a Java backbone (Room, repositories, IDs, time engine, alarms and notifications) with a Flutter (Dart) UI on top, connected by Pigeon
 - **Watch app:** Kotlin, Compose for Wear OS (comes after the phone app)
-- **Shared core:** a plain Java module with the data model, time engine and sync format, used by both apps
 
 ## Building
 
@@ -16,14 +15,74 @@ Open the project in Android Studio and run the `app` configuration on a device o
 
 ---
 
+# Design (decided)
+
+## Dials and arcs
+
+- A **Dial** is one whole day's layout. Arcs live on a Dial, the way paint lives on a painting.
+- **Arcs never move between Dials.** Each arc stores the ID of the Dial it's on (`dialId`). Deleting a Dial deletes its arcs.
+- A Dial's **name is only a label for the user**. The code only cares about its ID and its assignments.
+- **The app ships with one default Dial.** The user can edit it or make new ones.
+
+## The grid and arc rules
+
+- Every Dial is a **5-minute grid**. This is fixed in code; the user never changes it.
+- Arc edges always sit on the grid (9:05 yes, 9:07 no), and arcs resize in 5-minute steps.
+- An arc is **5 minutes to 24 hours** long. A full-day arc ends at minute 1440 (midnight).
+- **Arcs don't overlap.**
+- **Arcs never cross midnight.** Each Dial is one self-contained 24-hour day.
+- All of these rules are checked in one place (`ArcValidator`) before anything is saved.
+
+## The tray
+
+- The Dial editor has a **tray of 8 default arcs**, each with a preset colour and emoji. They're 1 hour long by default.
+- The user **always starts an arc by placing one from the tray**, then edits it if they want.
+- Tray arcs are presets, not stored arcs. Placing one creates a brand-new arc on the Dial.
+
+## Weekdays and dates
+
+- The user picks **which day the week starts on**. The Dials screen shows the weekdays left to right, starting with that day.
+- **Each weekday has exactly one Dial assigned.** A Dial can be on 0–7 weekdays, in any combination.
+- **Dates aren't stored for weekdays.** The app works out which dates are in "this week" on the fly. Days that have already passed stay on screen until the week ends.
+- A Dial can be **assigned to a specific date ahead of time** (e.g. a family gathering). A date assignment **always beats** that date's weekday Dial. This is the ADHD accommodation: when you know a weird day is coming, set it up right then.
+- The user gets **warned before deleting or editing a Dial that's assigned to a date**, so they don't wipe it by accident.
+- **One-off Dials stay in the catalog** after their date passes. A setting to clean them up may come later.
+
+## Limits
+
+- **99 Dials** total.
+- **288 arcs per Dial** (the most that fit in 24 hours at 5 minutes each).
+
+## IDs
+
+| Kind | Format | Example | Reads as |
+|---|---|---|---|
+| Dial | `D` + origin + dial # + `-` + check | `DU04-9` | Dial, user-made, #04 |
+| Arc | `A` + origin + dial # + arc # + `-` + check | `AU04045-5` | Arc, user-made, on Dial 04, arc #045 |
+
+- **Origin:** `S` = shipped with the app, `U` = user-made. For arcs, it's how the arc itself was born: arcs that ship on the default Dial are `S`, and arcs the user adds (to any Dial) are `U`.
+- **Check digit:** turn each character before the `-` into a number (`0`–`9` are themselves, `A`=10 … `Z`=35), multiply each by its position (1, 2, 3…), add them up, and keep the last digit. To check an ID, redo the math and compare.
+- **The whole ID is the key.** `AS01001` and `AU01001` can both exist.
+- **Numbering:** on app start, each counter starts at the lowest free number, worked out from the database (nothing is saved between launches). While the app runs, counters only count up, so deleted numbers wait until the next start. If a counter hits the top mid-session, it scans for the lowest free number.
+- **Open:** can a `DS01` and a `DU01` both exist? If so, arc IDs can't tell which Dial 01 they mean.
+
+## Shelved for now
+
+- **Tags** on Dials (user-only labels for filtering).
+- **Nudges** (reminders and alarms). The fields stay on `ArcEntity`, but the feature isn't part of the first draft.
+- Temporary fallback IDs.
+
+---
+
 # Build Plan
 
 ## Ground rules
 
-1. **Foundation first.** The data model, time engine, storage and nudges come before the dial. If the foundation is shaky, the dial is useless to the people it's for.
+1. **Foundation first.** The data model, time engine and storage come before the dial. If the foundation is shaky, the dial is useless to the people it's for.
 2. **The phone is finished before the watch.** The phone app must be solid on its own, and then the watch plugs into it.
-3. **Build for the watch from day one, without building the watch.** Anything both apps need goes in a `shared` module, so the watch can reuse it later without a rewrite.
+3. **Keep the watch in mind without building it.** Schedules will be sent to the watch as JSON, so the data model has to serialize cleanly. (The old `shared` module was deleted on purpose. Everything lives in `app/` for now.)
 4. **The phone is the source of truth.** The watch only shows the plan and sends actions back.
+5. **All logic lives in Java.** The Flutter UI only shows things and sends user actions back through Pigeon.
 
 ---
 
@@ -32,7 +91,7 @@ Open the project in Android Studio and run the `app` configuration on a device o
 | Decision | Choice / recommendation | Notes |
 |---|---|---|
 | Name | **OnArc** | |
-| Package name | e.g. `com.onarc.app` | Permanent once you release. The phone and watch apps must share it. |
+| Package name | **`com.onarc.app`** | Permanent once released. The phone and watch apps must share it. |
 | Phone UI toolkit | **Flutter (Dart)** over a Java backbone, bridged by **Pigeon** ("DPJ") | Decided. All logic stays in Java; Dart is screens and drawing only. Project shape (add-to-app vs. a Flutter project with the Java in `android/`) gets decided when UI work starts. |
 | Watch UI toolkit | **Compose for Wear OS** (Kotlin) | Decide when we reach the watch. |
 | Phone minSdk | 26 (Android 8.0) | |
@@ -46,44 +105,52 @@ Open the project in Android Studio and run the `app` configuration on a device o
 
 ```
 OnArc/
-├── app/      ← phone app (Java)
-├── shared/   ← plain Java library: data model, time engine, sync format
+├── app/      ← phone app: Java backbone now, Flutter UI added when UI work starts
 └── wear/     ← watch app (Kotlin), added at step 8
 ```
 
-- [ ] Create a new Android Studio project: **Empty Views Activity**, language **Java**. This becomes `app/`.
-- [ ] Add a **Java Library** module called `shared/`, and make `app` depend on it.
-- [ ] Rules for `shared/`: no Android imports. Plain Java only, so it can be unit-tested fast and the watch can reuse it.
-- [ ] Add a version catalog (`gradle/libs.versions.toml`) and an Android `.gitignore`.
-- [ ] Check that it builds and launches, then commit.
+- [x] Create a new Android Studio project, language **Java**. This becomes `app/`.
+- [x] Add a version catalog (`gradle/libs.versions.toml`) and an Android `.gitignore`.
+- [x] Check that it builds.
 - [ ] *(Optional, later)* **CI**: a GitHub Action that builds and tests on every push.
 
-## 2. Data model + time engine (in `shared/`)
+## 2. Data model + time engine (Java)
 
-This is the heart of the app. **Work it out together before writing code.** Questions to answer:
-
-- What is an **Arc**? Title, start, end, colour, icon, notes, warning time… What else?
-- What does a **day** look like? Can there be gaps? Can arcs overlap?
-- **Templates and recurring days**: "Workday", "Weekend", and so on. How does one get applied to a day?
-- **Transitions**: how many warnings before a switch, and what kind? Do different arcs need different warnings?
-- **Real life**: what happens when an arc overruns, or gets skipped or snoozed? Does the rest of the day shift, or stay put?
-- **Edge cases**: arcs that cross midnight, DST changes, timezone travel.
-
-Then:
-
-- [ ] Model classes (Arc, DayPlan, Template, …)
-- [ ] Time engine: current arc, next arc, time left, upcoming nudges, and what to do when things change
+- [x] `ArcEntity`
+- [x] `DialEntity`
+- [ ] Foreign key on `ArcEntity.dialId` (delete a Dial → its arcs go too)
+- [ ] ID system (see **IDs** above)
+- [ ] Weekday assignments (7 rows: weekday → Dial)
+- [ ] Date assignments
+- [ ] The shipped default Dial, and the 8 tray presets
+- [ ] Time engine: the 5-minute grid, "this week's" dates, `ArcValidator`, which Dial a date gets (date assignment first, else the weekday's), current arc, next arc
+- [ ] Transitions: what happens when an arc is completed, skipped or extended
 - [ ] JSON serialization (used later for backups and for the watch)
 - [ ] **Unit tests for all of it**
 
+Still to work out: DST changes and timezone travel.
+
 ## 3. Storage (phone)
 
-- [ ] **Room** database for arcs, days and templates.
-- [ ] A repository layer. The UI never touches the database directly.
+- [x] **Room** database for arcs and Dials.
+- [x] A repository layer (`ArcRep`, `DialRep`). The UI never touches the database directly.
+- [ ] Room tables for weekday and date assignments.
 - [ ] `LiveData` on the Java side, a state holder (Provider or Riverpod) on the Flutter side, with Pigeon carrying data and "something changed" signals between them.
-- [ ] Settings in `SharedPreferences` or DataStore.
+- [ ] Settings (week start day) in `SharedPreferences` or DataStore.
 
-## 4. Nudge engine (phone)
+## 4. Ugly test screen
+
+- [ ] A plain list of a Dial's arcs, with add, edit and delete, wired to the real storage.
+- [ ] Use it for real for a few days. If the foundation is wrong, fix it here, before the dial.
+
+## 5. The dial and screens
+
+- [ ] The dial, drawn in Flutter (`CustomPainter`): the arcs, a "now" hand and labels.
+- [ ] Tap an arc to edit it. Drag its ends to resize it, in 5-minute steps.
+- [ ] TalkBack support through Flutter's `Semantics` widget.
+- [ ] Screens: the week strip (Dials screen), the Dial catalog, the Dial editor with the tray, the arc editor, Settings, and onboarding.
+
+## 6. Nudge engine (phone) — after the first draft
 
 - [ ] Notification channels: "coming up" and "switch now".
 - [ ] Ask for the `POST_NOTIFICATIONS` permission (Android 13+).
@@ -92,18 +159,6 @@ Then:
 - [ ] Notification actions: Done, +5 min, Skip.
 - [ ] Test with Doze forced on (`adb shell dumpsys deviceidle force-idle`), and on Samsung or Xiaomi phones if possible.
 - [ ] Build it so the watch can later be just another place a nudge gets delivered.
-
-## 5. Ugly test screen
-
-- [ ] A plain list of today's arcs, with add, edit and delete, wired to the real storage and nudges.
-- [ ] Use it for real for a few days. If the foundation is wrong, fix it here, before the dial.
-
-## 6. The dial
-
-- [ ] The dial, drawn in Flutter (`CustomPainter`): the arcs, a "now" hand and labels.
-- [ ] Tap an arc to edit it. Later, drag its ends to resize it.
-- [ ] TalkBack support through Flutter's `Semantics` widget.
-- [ ] Screens: Today, the arc editor (a bottom sheet), Templates, Settings, and onboarding.
 
 ## 7. Polish
 
@@ -124,13 +179,13 @@ Then:
 
 ## 9. Testing (ongoing, not only at the end)
 
-- [ ] Unit tests for `shared/`.
+- [ ] Unit tests for the Java backbone (ID system, time engine).
 - [ ] Room/DAO tests.
-- [ ] Espresso smoke tests.
+- [ ] Flutter widget and integration tests for the UI.
 - [ ] Manual checklist:
   - [ ] nudges fire on time with the screen off
   - [ ] nudges still fire after a reboot
-  - [ ] plans that cross midnight work
+  - [ ] a full 24-hour arc (ending at minute 1440) works
   - [ ] DST changes are handled
   - [ ] TalkBack can read the dial
 
@@ -148,4 +203,4 @@ Then:
 
 ## Later, not v1
 
-Calendar import, cloud backup or accounts, home-screen widgets, stats (careful — can turn into shame), iOS.
+Calendar import, cloud backup or accounts, home-screen widgets, stats (careful — can turn into shame), iOS, Tags.

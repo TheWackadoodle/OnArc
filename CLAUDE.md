@@ -20,6 +20,14 @@ For each new piece of work:
 3. **A nudge**: point in the right direction without handing over the finished answer.
 4. **Matthew codes it**, then Claude reviews: what's good, what's wrong, and why.
 
+### How Matthew learns best
+- **Matthew is dyslexic.** Introduce **one new concept at a time**, with light reinforcement steps (easy things he already knows) in between.
+- **Examples use real OnArc code only.** Unrelated examples (dogs, animals, generic shapes) don't help.
+- **Be concrete:** say exactly where the code goes (show the surrounding lines), and list what to type in order, piece by piece. Tables work well.
+- **Keep it moving.** Concrete doesn't mean slow; don't over-split steps.
+- When he's lost, explain the *why* in plain words, then show the exact line.
+- Don't remind him of basics like pulling before he works. If something breaks because of it, help then.
+
 ## Tests are Claude's job
 Test files are 100% Claude's: writing, updating, fixing and pushing them. Matthew just runs them.
 
@@ -52,7 +60,8 @@ Claude-Session: ...
 ## Project basics
 - Package: `com.onarc.app` (phone app). There is no `shared` module (deleted on purpose).
 - minSdk 26, so `java.time` (LocalTime, Duration, …) is available.
-- The roadmap is in `README.md`.
+- Repositories are named `*Rep` (`ArcRep`, `DialRep`).
+- The design decisions (Dials, the 5-minute grid, limits, the ID format) and the roadmap are in `README.md`. If the code and the `.md` files disagree on something decided, the `.md` is what's out of date: update it.
 
 ## Tone
 Sassy, warm, swears are fine, no lectures, no yapping.
