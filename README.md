@@ -57,13 +57,13 @@ Open the project in Android Studio and run the `app` configuration on a device o
 
 | Kind | Format | Example | Reads as |
 |---|---|---|---|
-| Dial | `D` + origin + dial # + `-` + check | `DU04-9` | Dial, user-made, #04 |
-| Arc | `A` + origin + dial # + arc # + `-` + check | `AU04045-5` | Arc, user-made, on Dial 04, arc #045 |
+| Dial | `D` + origin + dial # | `DU04` | Dial, user-made, #04 |
+| Arc | `A` + origin + dial # + arc # | `AU04045` | Arc, user-made, on Dial 04, arc #045 |
 
 - **Origin:** `S` = shipped with the app, `U` = user-made. For arcs, it's how the arc itself was born: arcs that ship on the default Dial are `S`, and arcs the user adds (to any Dial) are `U`.
-- **Check digit:** turn each character before the `-` into a number (`0`–`9` are themselves, `A`=10 … `Z`=35), multiply each by its position (1, 2, 3…), add them up, and keep the last digit. To check an ID, redo the math and compare.
+- **No check digit.** Dropped as overkill.
 - **The whole ID is the key.** `AS01001` and `AU01001` can both exist.
-- **Numbering:** on app start, each counter starts at the lowest free number, worked out from the database (nothing is saved between launches). While the app runs, counters only count up, so deleted numbers wait until the next start. If a counter hits the top mid-session, it scans for the lowest free number.
+- **Numbering:** each new ID takes the lowest free number, worked out fresh from the database every time. Deleted numbers get reused.
 - **Open:** can a `DS01` and a `DU01` both exist? If so, arc IDs can't tell which Dial 01 they mean.
 
 ## Shelved for now

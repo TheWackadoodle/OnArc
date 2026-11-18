@@ -8,9 +8,6 @@ import androidx.room.Query;
 import androidx.room.Update;
 import java.util.List;
 
-// TODO (Claude wrote this whole file, explain it to Matthew later):
-//  - mostly the same as ArcDao, but for Dials
-//  - new: getDefaultDial() and getArcsForDial(), and how the WHERE queries work
 @Dao
 public interface DialDao {
 
@@ -34,4 +31,10 @@ public interface DialDao {
 
      @Query("SELECT * FROM arcs WHERE dialId = :dialId ORDER BY startMinute ASC")
      LiveData<List<ArcEntity>> getArcsForDial(String dialId);
+
+     @Query("SELECT id FROM dials")
+     List<String> getAllDialIds();
+
+     @Query("SELECT COUNT(dialId) FROM dials")
+     int getDialCount();
 }

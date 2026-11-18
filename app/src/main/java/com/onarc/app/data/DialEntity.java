@@ -3,28 +3,14 @@ package com.onarc.app.data;
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-import java.util.UUID;
 
 @Entity(tableName = "dials")
 public class DialEntity {
 
-    @PrimaryKey
-    @NonNull
-    private String id = UUID.randomUUID().toString();
-
+    @PrimaryKey(autoGenerate = true)
+    private long dialId;
     private String name;
     private boolean isDefault;
-
-    public enum Tags {
-        WEEKDAY,
-        WEEKEND,
-        VACATION,
-        HOLIDAY,
-        BIRTHDAY,
-        FAMILY,
-        FRIENDS,
-        PARTNER
-    }
 
     // Empty constructor required by Room
     public DialEntity() {
@@ -32,13 +18,12 @@ public class DialEntity {
 
     // --- Getters & Setters ---
 
-    @NonNull
-    public String getId() {
-        return id;
+    public long getDialId() {
+        return dialId;
     }
 
-    public void setId(@NonNull String id) {
-        this.id = id;
+    public void setDialId(long dialId) {
+        this.dialId = dialId;
     }
 
     public String getName() {
