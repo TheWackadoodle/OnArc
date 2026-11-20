@@ -9,10 +9,10 @@ public class ArcEntity {
 
     @PrimaryKey
     @NonNull
-    private String id;
+    private Long id;
 
     // Which Dial this arc is on
-    private String dialId;
+    private Long dialId;
 
     // Core fields
     private String name;
@@ -33,26 +33,26 @@ public class ArcEntity {
     private boolean nudgeSound;
 
     // Default Constructor required by Room
-    public ArcEntity(@NonNull String id) {
+    public ArcEntity(@NonNull Long id) {
          this.id = id;
     }
 
     // --- Getters & Setters ---
 
     @NonNull
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(@NonNull String id) {
+    public void setId(@NonNull Long id) {
         this.id = id;
     }
 
-    public String getDialId() {
+    public Long getDialId() {
         return dialId;
     }
 
-    public void setDialId(String dialId) {
+    public void setDialId(Long dialId) {
         this.dialId = dialId;
     }
 

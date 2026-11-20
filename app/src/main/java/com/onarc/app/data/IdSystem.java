@@ -2,7 +2,8 @@ package com.onarc.app.data;
 
 import org.apache.commons.lang3.StringUtils;
 
-public class IdSystem {
+// This file is mothballed, for now.  Do not treat it as a real file.
+/*public class IdSystem {
 
      private enum TypeTag {
           ARC,
@@ -42,4 +43,4 @@ public class IdSystem {
           arcId.append(arcNumber);
           return arcId.toString();
      }
-}
+}*/

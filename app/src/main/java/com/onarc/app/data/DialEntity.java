@@ -10,7 +10,7 @@ public class DialEntity {
     @PrimaryKey(autoGenerate = true)
     private long dialId;
     private String name;
-    private boolean isDefault;
+    public boolean isDefault; // Bool for Creator Tag replacement
 
     // Empty constructor required by Room
     public DialEntity() {

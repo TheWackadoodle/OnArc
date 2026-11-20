@@ -6,11 +6,6 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-import OnArc.app.data.ArcDao;
-import OnArc.app.data.ArcEntity;
-import OnArc.app.data.DialDao;
-import OnArc.app.data.DialEntity;
-
 @Database(entities = {ArcEntity.class, DialEntity.class}, version = 2, exportSchema = false)
 public abstract class OnArcDatabase extends RoomDatabase {
      private static OnArcDatabase instance;

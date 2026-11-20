@@ -23,17 +23,17 @@ public interface DialDao {
      @Query("SELECT * FROM dials ORDER BY name ASC")
      LiveData<List<DialEntity>> getAllDials();
 
-     @Query("SELECT * FROM dials WHERE id = :id LIMIT 1")
-     LiveData<DialEntity> getDialById(String id);
+     @Query("SELECT * FROM dials WHERE dialId = :dialId LIMIT 1")
+     LiveData<DialEntity> getDialById(Long dialId);
 
      @Query("SELECT * FROM dials WHERE isDefault = 1 LIMIT 1")
      LiveData<DialEntity> getDefaultDial();
 
      @Query("SELECT * FROM arcs WHERE dialId = :dialId ORDER BY startMinute ASC")
-     LiveData<List<ArcEntity>> getArcsForDial(String dialId);
+     LiveData<List<ArcEntity>> getArcsForDial(Long dialId);
 
-     @Query("SELECT id FROM dials")
-     List<String> getAllDialIds();
+     @Query("SELECT dialId FROM dials")
+     List<Long> getAllDialIds();
 
      @Query("SELECT COUNT(dialId) FROM dials")
      int getDialCount();
